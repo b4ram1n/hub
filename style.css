@@ -152,3 +152,46 @@ hr {
 img.black {
 	filter: invert(1);
 }
+
+/* スマホ対応 */
+@media (max-width: 768px) {
+	main {
+		flex-direction: column; /* 左右から縦並びに */
+		gap: 15px;
+		padding: 10px;
+	}
+
+	.left-column, .right-panel {
+		max-width: 100%;
+		flex: none;
+	}
+
+	.video-panel {
+		flex-direction: column; /* 動画とテキストを縦並び */
+		align-items: center;
+		gap: 15px;
+	}
+
+	.video-panel iframe {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.video-text {
+		text-align: center;
+		padding: 0;
+	}
+
+	.extra-text-panel p {
+		padding-left: 0;
+	}
+
+	.right-panel {
+		text-align: center;
+		align-items: center;
+	}
+
+	.other-link {
+		justify-content: center;
+	}
+}
