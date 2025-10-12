@@ -18,7 +18,7 @@ body, body * {
 }
 
 #particles-js {
-	pointer-events: auto;
+	pointer-events: auto !important;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -46,6 +46,10 @@ header img {
 	height: 40px;
 	border-radius: 50%;
 	margin-right: 12px;
+}
+
+a {
+	pointer-events: auto !important;
 }
 
 header h1 {
@@ -104,7 +108,7 @@ hr {
 }
 
 .video-panel iframe {
-	pointer-events: auto;
+	pointer-events: auto !important;
 	width: 60%;
 	aspect-ratio: 16 / 9;
 	border: none;
@@ -146,10 +150,10 @@ hr {
 .other-link {
 	display: flex;
 	align-items: center;
-}
-
-.other-link img {
-	margin: 0px 0px 0px 5px;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	max-width: 200px;
+	gap: 5px;
 }
 
 .sns-link {
@@ -218,5 +222,6 @@ img.black {
 
 	.other-link {
 		justify-content: center;
+		max-width: none;
 	}
 }
