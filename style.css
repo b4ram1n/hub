@@ -146,6 +146,8 @@ hr {
 }
 
 .sns-link img {
+	width: 25px;
+	padding: 5px;
 	transition: transform 0.3s;
 }
 
