@@ -1,0 +1,154 @@
+body {
+	margin: 0;
+	background: #0e0e0e;
+	color: #f1f1f1;
+	overflow-x: auto;
+	display: flex;
+	justify-content: center;
+	user-select: none;
+}
+body, body * {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background: rgba(20, 20, 20, 0.8);
+	backdrop-filter: blur(8px);
+	display: flex;
+	align-items: center;
+	padding: 10px 20px;
+	z-index: 10;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+header img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	margin-right: 12px;
+}
+
+header h1 {
+	font-size: 1.2rem;
+	font-weight: 600;
+}
+
+h3 {
+	margin: 10px 0px;
+}
+
+main {
+	margin-top: 80px;
+	display: flex;
+	justify-content: center;
+	gap: 30px;
+	padding: 20px;
+}
+
+hr {
+	border: none;
+	height: 1px;
+	background-color: rgba(255, 255, 255, 0.2);
+	margin: 20px 0;
+}
+
+.panel {
+	background: rgba(30, 30, 30, 0.7);
+	border-radius: 16px;
+	padding: 10px 20px;
+	backdrop-filter: blur(8px);
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 左全体 */
+.left-column {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	flex: 1;
+	max-width: 750px;
+}
+
+/* 左上段 */
+.video-panel {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+}
+
+.video-panel iframe {
+	width: 60%;
+	aspect-ratio: 16 / 9;
+	border: none;
+	border-radius: 12px;
+	flex-shrink: 0;
+	min-width: 420px;
+}
+
+.video-text {
+	flex: 1;
+	text-align: left;
+	font-size: 0.95rem;
+	line-height: 1.6;
+	color: #ddd;
+	overflow-wrap: break-word;
+}
+
+/* 左下段 */
+.extra-text-panel {
+	text-align: left;
+	font-size: 0.95rem;
+	line-height: 1.8;
+	color: #ddd;
+}
+
+.extra-text-panel p {
+	padding-left: 20px;
+	line-height: 1.5;
+}
+
+/* 右枠 */
+.right-panel {
+	text-align: left;
+	justify-content: flex-start;
+	align-items: flex-start;
+	min-width: 150px;
+}
+
+.other-link {
+	display: flex;
+	align-items: center;
+}
+
+.other-link img {
+	margin: 0px 0px 0px 5px;
+}
+
+.sns-link {
+	display: flex;
+	background: transparent;
+	box-shadow: none;
+	border-radius: 0;
+}
+
+.sns-link:hover img {
+	transform: scale(1.2);
+}
+
+.sns-link img {
+	transition: transform 0.3s;
+}
+
+img.black {
+	filter: invert(1);
+}
