@@ -108,14 +108,18 @@ hr {
 	gap: 20px;
 }
 
+#youtube-container {
+	width: 60%;
+	min-width: 420px;
+}
+
 .video-panel iframe {
 	pointer-events: auto !important;
-	width: 60%;
+	width: 100%;
 	aspect-ratio: 16 / 9;
 	border: none;
 	border-radius: 12px;
 	flex-shrink: 0;
-	min-width: 420px;
 }
 
 .video-text {
@@ -172,10 +176,6 @@ hr {
 	width: 25px;
 	padding: 5px;
 	transition: transform 0.3s;
-}
-
-img.black {
-	filter: invert(1);
 }
 
 .phrase {
@@ -239,9 +239,9 @@ img.black {
 		gap: 15px;
 	}
 
-	.video-panel iframe {
+	#youtube-container {
 		width: 100%;
-		min-width: 0;
+		min-width: none;
 	}
 
 	.video-text {
