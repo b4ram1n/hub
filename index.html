@@ -157,64 +157,104 @@
 		loader.style.opacity = "0";
 		setTimeout(() => loader.remove(), 600);
 
-	// --- YouTube API 設定 ---
-	const API_KEY = "AIzaSyB-JhdMDLgU_uBcVSDV2ZnegWPSUpBMZak";
-	const CHANNEL_ID = "UCjCrR0KFUZjDwXsIQ3GlICA";
-	const container = document.getElementById("youtube-container");
+		// --- YouTube API 設定 ---
+		const API_KEY = "AIzaSyB-JhdMDLgU_uBcVSDV2ZnegWPSUpBMZak";
+		const CHANNEL_ID = "UCjCrR0KFUZjDwXsIQ3GlICA";
+		const CACHE_KEY = "youtube_cache";
+		const CACHE_EXPIRY_HOURS = 12; // キャッシュ有効期限
+		const container = document.getElementById("youtube-container");
 
-	// --- 共通関数：iframe生成 ---
-	function embedVideo(videoId) {
-		const iframe = document.createElement("iframe");
-		iframe.src = `https://www.youtube.com/embed/${videoId}`;
-		iframe.frameBorder = 0;
-		iframe.allow =
-			"accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-		iframe.allowFullscreen = true;
-		container.appendChild(iframe);
-	}
+		// --- 共通関数：iframe生成 ---
+		function embedVideo(videoId) {
+			container.innerHTML = ""; // 以前の内容をクリア
+			const iframe = document.createElement("iframe");
+			iframe.src = `https://www.youtube.com/embed/${videoId}`;
+			iframe.frameBorder = 0;
+			iframe.allow =
+				"accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+			iframe.allowFullscreen = true;
+			container.appendChild(iframe);
+		}
 
-	// --- APIで動画を取得 ---
-	function fetchLiveOrUpcoming() {
-		const baseUrl = "https://www.googleapis.com/youtube/v3/search";
-		const liveUrl = `${baseUrl}?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`;
-		const upcomingUrl = `${baseUrl}?part=snippet&channelId=${CHANNEL_ID}&eventType=upcoming&type=video&key=${API_KEY}`;
+		// --- APIから動画を取得 ---
+		async function fetchLiveOrUpcoming() {
+			const baseUrl = "https://www.googleapis.com/youtube/v3/search";
+			const liveUrl = `${baseUrl}?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`;
+			const upcomingUrl = `${baseUrl}?part=snippet&channelId=${CHANNEL_ID}&eventType=upcoming&type=video&key=${API_KEY}`;
 
-		// まずライブ中をチェック
-		fetch(liveUrl)
-			.then(res => res.json())
-			.then(data => {
-				if (data.items && data.items.length > 0) {
-					const videoId = data.items[0].id.videoId;
-					embedVideo(videoId);
-				} else {
-					// ライブ中がないなら待機中をチェック
-					fetch(upcomingUrl)
-						.then(res => res.json())
-						.then(upData => {
-							if (upData.items && upData.items.length > 0) {
-								const videoId = upData.items[0].id.videoId;
-								embedVideo(videoId);
-							} else {
-								container.innerHTML = `
-									<p style="text-align:center; color:#aaa; padding:20px;">
-										現在ライブ配信または待機中の配信はありません。
-									</p>`;
-							}
-						})
-						.catch(err => {
-							console.error("YouTube API Error (upcoming):", err);
-							container.innerHTML = `<p style="text-align:center; color:#f66;">配信情報の取得に失敗しました。</p>`;
-						});
+			try {
+				// ライブ中チェック
+				const liveRes = await fetch(liveUrl);
+				const liveData = await liveRes.json();
+
+				if (liveData.items && liveData.items.length > 0) {
+					return { type: "live", videoId: liveData.items[0].id.videoId };
 				}
-			})
-			.catch(err => {
-				console.error("YouTube API Error (live):", err);
-				container.innerHTML = `<p style="text-align:center; color:#f66;">配信情報の取得に失敗しました。</p>`;
-			});
-	}
 
-	fetchLiveOrUpcoming();
-});
+				// 待機中チェック
+				const upRes = await fetch(upcomingUrl);
+				const upData = await upRes.json();
+
+				if (upData.items && upData.items.length > 0) {
+					return { type: "upcoming", videoId: upData.items[0].id.videoId };
+				}
+
+				return null;
+			} catch (err) {
+				console.error("YouTube API Error:", err);
+				return null;
+			}
+		}
+
+		// --- キャッシュを確認 or API呼び出し ---
+		async function loadVideo() {
+			const cached = localStorage.getItem(CACHE_KEY);
+
+			if (cached) {
+				const data = JSON.parse(cached);
+				const now = Date.now();
+
+				// キャッシュが12時間以内なら再利用
+				if (now - data.timestamp < CACHE_EXPIRY_HOURS * 60 * 60 * 1000) {
+					console.log("Using cached YouTube data");
+					if (data.videoId) {
+						embedVideo(data.videoId);
+					} else {
+						container.innerHTML = `
+							<p style="text-align:center; color:#aaa; padding:20px;">
+								現在ライブ配信または待機中の配信はありません。
+							</p>`;
+					}
+					return;
+				}
+			}
+
+			// 新しいデータを取得
+			console.log("Fetching fresh data from YouTube API...");
+			const result = await fetchLiveOrUpcoming();
+
+			// 結果をキャッシュ保存
+			localStorage.setItem(
+				CACHE_KEY,
+				JSON.stringify({
+					timestamp: Date.now(),
+					videoId: result ? result.videoId : null
+				})
+			);
+
+			// 結果に応じて表示
+			if (result && result.videoId) {
+				embedVideo(result.videoId);
+			} else {
+				container.innerHTML = `
+					<p style="text-align:center; color:#aaa; padding:20px;">
+						現在ライブ配信または待機中の配信はありません。
+					</p>`;
+			}
+		}
+
+		loadVideo();
+	});
 </script>
 </body>
 </html>
