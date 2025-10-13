@@ -156,31 +156,16 @@
 		const loader = document.getElementById("loader");
 		loader.style.opacity = "0";
 		setTimeout(() => loader.remove(), 600);
+
+		// YouTube iframeを生成
+		const container = document.getElementById("youtube-container");
+		const iframe = document.createElement("iframe");
+		iframe.src = "https://www.youtube.com/embed/live_stream?channel=UCjCrR0KFUZjDwXsIQ3GlICA";
+		iframe.frameBorder = 0;
+		iframe.allow = "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+		iframe.allowFullscreen = true;
+		container.appendChild(iframe);
 	});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("youtube-container");
-
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const iframe = document.createElement("iframe");
-        iframe.src = "https://www.youtube.com/embed/live_stream?channel=UCjCrR0KFUZjDwXsIQ3GlICA";
-        iframe.frameBorder = 0;
-        iframe.allow = "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-        iframe.allowFullscreen = true;
-        container.appendChild(iframe);
-
-        obs.unobserve(container);
-      }
-    });
-  }, {
-    rootMargin: "200px" // 少し手前で読み込み開始
-  });
-
-  observer.observe(container);
-});
-
 </script>
 </body>
 </html>
