@@ -209,16 +209,19 @@
 		// --- キャッシュを確認 or API呼び出し ---
 		async function loadVideo() {
 			const cached = localStorage.getItem(CACHE_KEY);
+			let result = null;
 
 			if (cached) {
 				const data = JSON.parse(cached);
 				const now = Date.now();
 
-				// キャッシュが12時間以内なら再利用
+				// キャッシュが有効期限内なら再利用
 				if (now - data.timestamp < CACHE_EXPIRY_HOURS * 60 * 60 * 1000) {
 					console.log("Using cached YouTube data");
 					if (data.videoId) {
-						embedVideo(result.videoId, result.type === "live");
+						// キャッシュに「タイプ」情報がない場合、強制的に live 判定を false にする
+						const isLive = data.type === "live";
+						embedVideo(data.videoId, isLive);
 					} else {
 						container.innerHTML = `
 							<p style="text-align:center; color:#aaa; padding:20px;">
@@ -229,16 +232,17 @@
 				}
 			}
 
-			// 新しいデータを取得
+			// --- 新しいデータを取得 ---
 			console.log("Fetching fresh data from YouTube API...");
-			const result = await fetchLiveOrUpcoming();
+			result = await fetchLiveOrUpcoming();
 
-			// 結果をキャッシュ保存
+			// 結果をキャッシュに保存（タイプも含めて）
 			localStorage.setItem(
 				CACHE_KEY,
 				JSON.stringify({
 					timestamp: Date.now(),
-					videoId: result ? result.videoId : null
+					videoId: result ? result.videoId : null,
+					type: result ? result.type : null
 				})
 			);
 
