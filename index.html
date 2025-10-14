@@ -161,13 +161,17 @@
 		const container = document.getElementById("youtube-container");
 
 		// --- 共通関数：iframe生成 ---
-		function embedVideo(videoId) {
+		function embedVideo(videoId, isLive = false) {
 			container.innerHTML = ""; // 以前の内容をクリア
 			const iframe = document.createElement("iframe");
-			iframe.src = `https://www.youtube.com/embed/${videoId}`;
+
+			// 配信中のみ autoplay=1 を追加
+			const autoplay = isLive ? "?autoplay=1" : "";
+			iframe.src = `https://www.youtube.com/embed/${videoId}${autoplay}`;
+
 			iframe.frameBorder = 0;
 			iframe.allow =
-				"accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+				"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
 			iframe.allowFullscreen = true;
 			container.appendChild(iframe);
 		}
@@ -214,7 +218,7 @@
 				if (now - data.timestamp < CACHE_EXPIRY_HOURS * 60 * 60 * 1000) {
 					console.log("Using cached YouTube data");
 					if (data.videoId) {
-						embedVideo(data.videoId);
+						embedVideo(result.videoId, result.type === "live");
 					} else {
 						container.innerHTML = `
 							<p style="text-align:center; color:#aaa; padding:20px;">
@@ -240,7 +244,7 @@
 
 			// 結果に応じて表示
 			if (result && result.videoId) {
-				embedVideo(result.videoId);
+				embedVideo(result.videoId, result.type === "live");
 			} else {
 				container.innerHTML = `
 					<p style="text-align:center; color:#aaa; padding:20px;">
